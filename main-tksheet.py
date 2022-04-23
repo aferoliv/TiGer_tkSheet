@@ -120,12 +120,15 @@ class Tela:
         self.comboE.grid(column=1, row=2, padx=10, pady=10)
         #
     def InsereAD (self):
+        #
+        # coleta os dados selecionados no combo e lança como linha na tabela AD
+        #
         self.tipo_bib = lista_biblioteca[self.combo.current()]
         selecao = self.comboE.current()
         self.numero_especieAD = self.numero_especieAD + 1
         biblioteca=self.biblioteca
         intermediario = Br.BronstedDados(biblioteca,selecao)
-        print('numero especie', self.numero_especieAD)
+        print("número linha", self.numero_especieAD)
         ######################
         #
         # imprime a linha na tabela AD
@@ -133,8 +136,10 @@ class Tela:
         if self.numero_especieAD < 8:
             selecionadoAD[self.numero_especieAD] = [biblioteca, selecao]
             linha = intermediario.valores.tolist()
-            print('selecao AD: ', selecao, 'biblioteca: ',self.tipo_bib, linha)
-            self.selecao_tabela.set_row_data(linha, values = linha)
+            print('tipo',type(linha), 'selecao AD: ', selecao, 'biblioteca: ',self.tipo_bib, linha)
+            self.selecao_tabelaAD.insert_row()
+            self.selecao_tabelaAD.set_row_data(self.numero_especieAD-1, values=tuple(linha))
+            print('********************************************************')
 
     def InsereNT(self):
         self.tipo_bib = lista_biblioteca[self.combo.current()]
@@ -146,8 +151,10 @@ class Tela:
         if self.numero_especieNT<3:
             selecionadoNT[self.numero_especieNT]=[biblioteca,selecao]
             linha = intermediario.valores.tolist()
-            print('selecao AD: ', selecao, 'biblioteca: ',self.tipo_bib, linha)
-            #self.selecao_tabelaNT.insert_row()
+            print('selecao NT: ', selecao, 'biblioteca: ',self.tipo_bib, linha)
+            self.selecao_tabelaNT.insert_row()
+            self.selecao_tabelaNT.set_row_data(self.numero_especieNT - 1, values=tuple(linha))
+            print('********************************************************')
 
     def TabelaAD(self,master):
 
@@ -155,17 +162,17 @@ class Tela:
         self.selecao_frameAD.grid(column=0, row=14)
         self.textoAD = tk.Label(self.selecao_frameAD, text='Titulado')
         self.textoAD.grid(column=1, row=10,  padx=10, pady=10)
-        legenda = ['sistema AD', 'nNH2', 'carga', 'nCOO(-)', 'pK1', 'pK2', 'pK3', 'pK4', 'pK5', 'pK6', 'pK7', 'pK8', 'fim']
-        self.selecao_tabela= tksheet.Sheet(self.selecao_frameAD,
-                                           height=100,
-                                           width=500,
+        legenda = ['sistema AD', 'nNH2', 'carga', 'nCOO(-)', 'pK1', 'pK2', 'pK3', 'pK4', 'pK5', 'pK6', 'pK7', 'pK8', 'Conc /(mol/L)']
+        self.selecao_tabelaAD= tksheet.Sheet(self.selecao_frameAD,
+                                           height=300,
+                                           width=1050,
                                            page_up_down_select_row=True,
                                            expand_sheet_if_paste_too_big=True,
                                            # empty_vertical = 0,
-                                           column_width=30,
+                                           column_width=75,
                                            startup_select=(0, 1, "rows"))
-        self.selecao_tabela.headers(legenda)
-        self.selecao_tabela.enable_bindings(("single_select",  # "single_select" or "toggle_select"
+        self.selecao_tabelaAD.headers(legenda)
+        self.selecao_tabelaAD.enable_bindings(("single_select",  # "single_select" or "toggle_select"
                                     "drag_select",  # enables shift click selection as well
                                     "select_all",
                                     "column_drag_and_drop",
@@ -193,7 +200,7 @@ class Tela:
                                     "edit_cell"
                                     ))
 
-        self.selecao_tabela.grid()
+        self.selecao_tabelaAD.grid()
 
     def TabelaNT(self,master):
 
@@ -202,14 +209,14 @@ class Tela:
         self.textoNT = tk.Label(self.selecao_frameNT, text='Titulante')
         self.textoNT.grid(column=1, row=1, padx=10, pady=10)
 
-        legenda = ['sistema NT', 'nNH2', 'carga', 'nCOO(-)', 'pK1', 'pK2', 'pK3', 'pK4', 'pK5', 'pK6', 'pK7', 'pK8', 'fim']
+        legenda = ['sistema NT', 'nNH2', 'carga', 'nCOO(-)', 'pK1', 'pK2', 'pK3', 'pK4', 'pK5', 'pK6', 'pK7', 'pK8', 'Conc /(mol/L)']
         self.selecao_tabelaNT= tksheet.Sheet(self.selecao_frameNT,
                                              height=100,
-                                             width=500,
+                                             width=1050,
                                            page_up_down_select_row=True,
                                            expand_sheet_if_paste_too_big=True,
                                            # empty_vertical = 0,
-                                           column_width=30,
+                                           column_width=75,
                                            startup_select=(0, 1, "rows"))
         self.selecao_tabelaNT.headers(legenda)
         self.selecao_tabelaNT.enable_bindings(("single_select",  # "single_select" or "toggle_select"
@@ -245,6 +252,7 @@ class Tela:
         sistemaAD=[]
         sistemaNT=[]
         print('Dados AD: ',selecionadoAD[1],'número AD',self.numero_especieAD, 'Dados NT', selecionadoNT, 'numero NT',self.numero_especieNT)
+
     def ButtonSair(self):
         #
         master.destroy
